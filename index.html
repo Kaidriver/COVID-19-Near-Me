@@ -4,9 +4,14 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <p>hi</p>
-    <script src = "main.js"></script>
+    <p id = "loc">Place: </p>
+    <p id = "confirm">Confirmed: </p>
+    <p id = "deaths">Deaths: </p>
 
+    <script src = "main.js"></script>
+    <script async defer
+   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBtcC5UcjjHStsK6f_AX72n0bUfX_JngdY&callback=getLoc">
+   </script>
   </body>
 
 
