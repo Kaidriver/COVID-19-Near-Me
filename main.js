@@ -8,8 +8,17 @@ function getLoc() {
     var geocoder = new google.maps.Geocoder;
     geocoder.geocode({'location': pos}, function(results, status) {
       if (status == 'OK') {
-        console.log(results[7])
-        let address = results[7].address_components;
+        console.log(results)
+
+        let num = 7;
+        for (var i = 0; i < results.length; i++) {
+          if (results[i].types[0] === "administrative_area_level_2") {
+            num = i;
+            console.log(num)
+            break;
+          }
+        }
+        let address = results[num].address_components;
         let countyInfo = address[0].long_name.split(" ")[0];
         let stateInfo = address[1].long_name;
 
