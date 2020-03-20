@@ -23,7 +23,8 @@ function getLoc() {
             let confirmed = document.getElementById("confirm");
             let deaths = document.getElementById("deaths");
             let place = document.getElementById("loc");
-
+            console.log(state, county)
+            console.log(data[data[state][county]])
             place.innerHTML = "Place: " + county + " County, " + state;
             confirmed.innerHTML = "Confirmed: " + data[state][county].confirmed;
             deaths.innerHTML = "Deaths: " + data[state][county].deaths;
