@@ -8,6 +8,7 @@ function getLoc() {
     var geocoder = new google.maps.Geocoder;
     geocoder.geocode({'location': pos}, function(results, status) {
       if (status == 'OK') {
+        console.log(results[7])
         let address = results[7].address_components;
         let countyInfo = address[0].long_name.split(" ")[0];
         let stateInfo = address[1].long_name;
@@ -24,7 +25,7 @@ function getLoc() {
             let deaths = document.getElementById("deaths");
             let place = document.getElementById("loc");
             console.log(state, county)
-            console.log(data[data[state][county]])
+            console.log(data[state][county])
             place.innerHTML = "Place: " + county + " County, " + state;
             confirmed.innerHTML = "Confirmed: " + data[state][county].confirmed;
             deaths.innerHTML = "Deaths: " + data[state][county].deaths;
