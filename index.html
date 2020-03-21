@@ -4,9 +4,23 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <p id = "loc">Place: </p>
-    <p id = "confirm">Confirmed: </p>
-    <p id = "deaths">Deaths: </p>
+
+    <h1 id = "title">Coronavirus Near Me</h1>
+    <h1>Please enable location popup!</h1>
+    <div id = "location"><h1 id = "loc">Place: </h1></div>
+
+    <div class = "flex">
+      <div class = "stats">
+        <h1>Confirmed:</h1>
+        <h1 id = "confirm"></h1>
+        <img class = "symbol" src = "confirmed.png">
+      </div>
+      <div class = "stats">
+        <h1>Deaths:</h1>
+        <h1 id = "deaths"></h1>
+        <img class = "symbol" src = "deaths.png">
+      </div>
+    </div>
 
     <script src = "main.js"></script>
     <script async defer

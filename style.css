@@ -1,3 +1,28 @@
-body {
-  color: red;
+h1{
+  text-align: center;
 }
+
+.stats {
+  text-align: center;
+}
+
+.symbol {
+  width: 200px;
+}
+.flex {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+#location {
+  text-align: center;
+  margin-bottom: 5%;
+  margin-top: 7%;
+}
+
+ #title {
+   margin-top: -.5%;
+   margin-bottom: -.5%;
+   font-size: 6vw;
+
+ }
