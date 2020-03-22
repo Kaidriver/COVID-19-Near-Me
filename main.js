@@ -22,29 +22,36 @@ function getLoc() {
         let countyInfo = address[0].long_name.split(" ")[0];
         let stateInfo = address[1].long_name;
 
-        fetch("https://cors-anywhere.herokuapp.com/https://coronavirus-county-api.herokuapp.com/latest")
+        fetch("https://coronavirus-tracker-api.herokuapp.com/v2/locations?source=csbs")
           .then(blob => blob.json())
           .then(data => {
-            console.log(data);
+            let locations = data.locations;
+            console.log(locations)
+
 
             let state = stateInfo;
             let county = countyInfo;
 
+            let confirmedNum = 0;
+            let deathsNum = 0;
+            for (var i = 0; i < locations.length; i++) {
+              if (locations[i].county === county && state === locations[i].state) {
+                confirmedNum = locations[i].latest.confirmed;
+                deathsNum = locations[i].latest.deaths;
+
+                break;
+              }
+            }
+
             let confirmed = document.getElementById("confirm");
             let deaths = document.getElementById("deaths");
             let place = document.getElementById("loc");
+
             console.log(state, county)
             place.innerHTML = "Place: " + county + " County, " + state;
 
-            if (data[state][county] == null ) {
-              confirmed.innerHTML = "0";
-              deaths.innerHTML =  "0";
-            }
-            else {
-              confirmed.innerHTML = data[state][county].confirmed;
-              deaths.innerHTML = data[state][county].deaths;
-            }
-
+            confirmed.innerHTML = confirmedNum;
+            deaths.innerHTML = deathsNum;
           });
       }
       else {
