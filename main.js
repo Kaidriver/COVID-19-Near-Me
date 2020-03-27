@@ -35,7 +35,7 @@ function getLoc() {
             let confirmedNum = 0;
             let deathsNum = 0;
             for (var i = 0; i < locations.length; i++) {
-              if (locations[i].county === county && state === locations[i].state) {
+              if (locations[i].county === county && state === locations[i].province) {
                 confirmedNum = locations[i].latest.confirmed;
                 deathsNum = locations[i].latest.deaths;
 
