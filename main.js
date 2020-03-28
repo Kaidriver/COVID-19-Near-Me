@@ -388,13 +388,15 @@ function getLoc() {
 
             var location = {lat: stateLocs[loc].latitude, lng: stateLocs[loc].longitude};
             var map = new google.maps.Map(document.getElementById("map"), {
-              zoom: 8,
-              center: location
+              zoom: 6.25,
+              center: location,
+              disableDefaultUI: true
             });
 
             for (var i = 0; i < stateCounties.length; i++) {
               let link = `https://us-county-boundary-api.herokuapp.com/api?state=${abrevs[state]}&county=${stateCounties[i].county}`;
-              let severity = stateCounties[i].latest.confirmed / totalConfirmed;
+              let confirmedCases = stateCounties[i].latest.confirmed;
+              let severity = confirmedCases / totalConfirmed * 100.0;
 
               fetch(link)
                 .then(blob => blob.json())
@@ -406,21 +408,48 @@ function getLoc() {
                         countyCoords.push(locPair);
                       }
                       console.log(countyCoords)
+
+
+                      var r, g, b = 0;
+                    	if(severity < 3) {
+                        g = 255;
+                        r = Math.round(510 - 5.10 * severity);
+
+                    	}
+                    	else {
+                        r = 255;
+                        g = 255 - Math.round(5.1 * severity);
+                    	}
+                    	var h = r * 0x10000 + g * 0x100 + b * 0x1;
+
                       var boundary = new google.maps.Polygon({
                         paths: countyCoords,
-                        strokeColor: '#FF0000',
-                        strokeOpacity: .8,
-                        strokeWeight: 3,
-                        fillColor: `rgb(${255 * (severity + .3)}, 2, 3)`,
-                        fillOpacity: .35
+                        strokeColor: 'black',
+                        strokeOpacity: .5,
+                        strokeWeight: 1.5,
+                        fillColor: '#' + ('000000' + h.toString(16)).slice(-6),
+                        fillOpacity: 1
                       });
 
                       boundary.setMap(map)
+                      var infowindow = new google.maps.InfoWindow();
+                      infowindow.opened = false;
+
+                      google.maps.event.addListener(boundary, 'mouseover', function(evt) {
+
+                        infowindow.setContent("Confirmed: " + confirmedCases + " " + severity);
+                        infowindow.setPosition(evt.latLng);
+                        infowindow.open(map);
+
+                      });
+                      google.maps.event.addListener(boundary, 'mouseout', function(evt) {
+                        infowindow.close();
+                        infowindow.opened = false;
+                      });
                     }
 
                 });
             }
-
           });
       }
       else {
