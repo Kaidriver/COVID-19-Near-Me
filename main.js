@@ -392,6 +392,11 @@ function getLoc() {
               center: location,
               disableDefaultUI: true
             });
+            var marker = new google.maps.Marker({
+              position: pos,
+              map: map,
+              title: 'Current Location'
+            });
 
             for (var i = 0; i < stateCounties.length; i++) {
               let link = `https://us-county-boundary-api.herokuapp.com/api?state=${abrevs[state]}&county=${stateCounties[i].county}`;
@@ -437,7 +442,7 @@ function getLoc() {
 
                       google.maps.event.addListener(boundary, 'mouseover', function(evt) {
 
-                        infowindow.setContent("Confirmed: " + confirmedCases + " " + severity);
+                        infowindow.setContent("Confirmed: " + confirmedCases);
                         infowindow.setPosition(evt.latLng);
                         infowindow.open(map);
 
