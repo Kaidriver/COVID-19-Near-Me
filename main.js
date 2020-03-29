@@ -498,7 +498,7 @@ for (var i = 0; i < selectors.length; i++) {
     document.getElementById("center-text").innerHTML = texts[evt.currentTarget.dataset.num];
     console.log(evt.currentTarget.dataset.num)
     if (evt.currentTarget.dataset.num == 4 && !expanded2) {
-      document.getElementById("menu2").style.transform = 'scale(2)'
+      document.getElementById("menu2").style.transform = 'scale(2.2)'
       expanded2 = true;
     }
     else if (evt.currentTarget.dataset.num < 6){

@@ -72,7 +72,7 @@
   border-radius: 50%;
   position: absolute;
   margin: auto;
-  top: 2;
+  top: 1;
   bottom: 0;
   left: 0;
   right: 0;
@@ -132,7 +132,4 @@ a:hover{
 .link {
   all: unset;
   color: #0080ff
-}
-.link:hover {
-
 }
