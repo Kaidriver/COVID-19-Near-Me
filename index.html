@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <button id = "button" class="btn btn-primary" type="submit">Button</button>
     <div class = "container-fluid">
       <h1 class = "text-center display-1">Coronavirus Near Me</h1>
       <h2 class = "text-center">Please enable location popup and say "voice control" for voice controls!</h2>
@@ -28,8 +27,19 @@
                 <h3 id = "deaths"></h3>
               </div>
             </div>
-
           </div>
+          <div class = "flex2 mt-3">
+              <div class="form-group">
+                <label for="exampleInputEmail1">County:</label>
+                <input type="text" class="form-control" id="countyInput" placeholder="Enter County">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">State:</label>
+                <input type="text" class="form-control" id="stateInput" placeholder="Enter State">
+              </div>
+          </div>
+
+          <button id = "updateInfo" type="submit" class="btn btn-primary text-center">Submit</button>
         </div>
         <div class = "col-md-6">
           <div class="toggle" id = "toggle">

@@ -314,6 +314,128 @@ var abrevs = {
 "Wisconsin": "WI",
 "Wyoming": "WY"
 }
+
+function update(stateInfo, countyInfo, pos) {
+
+  fetch("https://coronavirus-tracker-api.herokuapp.com/v2/locations?source=csbs")
+    .then(blob => blob.json())
+    .then(data => {
+      let locations = data.locations;
+      console.log(locations)
+
+
+      let state = stateInfo;
+      let county = countyInfo;
+
+      let confirmedNum = 0;
+      let deathsNum = 0;
+
+      let stateCounties = [];
+      let totalConfirmed = 0;
+      for (var i = 0; i < locations.length; i++) {
+        if (state === locations[i].province) {
+          if (locations[i].county === county) {
+            confirmedNum = locations[i].latest.confirmed;
+            deathsNum = locations[i].latest.deaths;
+          }
+
+          stateCounties.push(locations[i])
+          totalConfirmed += locations[i].latest.confirmed;
+        }
+      }
+
+      console.log(stateCounties)
+
+      let confirmed = document.getElementById("confirm");
+      let deaths = document.getElementById("deaths");
+      let place = document.getElementById("loc");
+
+      console.log(state, county)
+      place.innerHTML = "Place: " + county + " County, " + state;
+
+      confirmed.innerHTML = confirmedNum;
+      deaths.innerHTML = deathsNum;
+
+      let loc = 0;
+      for (var i = 0; i < stateLocs.length; i++) {
+        if (stateLocs[i].state === state) {
+          loc = i;
+          break;
+        }
+      }
+
+
+      var location = {lat: stateLocs[loc].latitude, lng: stateLocs[loc].longitude};
+      var map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 7,
+        center: location,
+        disableDefaultUI: true
+      });
+      var marker = new google.maps.Marker({
+        position: pos,
+        map: map,
+        title: 'Current Location'
+      });
+
+      for (var i = 0; i < stateCounties.length; i++) {
+        let link = `https://us-county-boundary-api.herokuapp.com/api?state=${abrevs[state]}&county=${stateCounties[i].county}`;
+        let confirmedCases = stateCounties[i].latest.confirmed;
+        let severity = confirmedCases / totalConfirmed * 100.0;
+
+        fetch(link)
+          .then(blob => blob.json())
+          .then(data => {
+              if(data != null) {
+                var countyCoords = [];
+                for (var j = 0; j < data.shape.length; j++) {
+                  let locPair = {lat: parseFloat(data.shape[j][0]), lng: parseFloat(data.shape[j][1])};
+                  countyCoords.push(locPair);
+                }
+                console.log(countyCoords)
+
+
+                var r, g, b = 0;
+                if(severity < 3) {
+                  g = 255;
+                  r = Math.round(510 - 5.10 * severity);
+
+                }
+                else {
+                  r = 255;
+                  g = 255 - Math.round(5.1 * severity);
+                }
+                var h = r * 0x10000 + g * 0x100 + b * 0x1;
+
+                var boundary = new google.maps.Polygon({
+                  paths: countyCoords,
+                  strokeColor: 'black',
+                  strokeOpacity: .5,
+                  strokeWeight: 1.5,
+                  fillColor: '#' + ('000000' + h.toString(16)).slice(-6),
+                  fillOpacity: 1
+                });
+
+                boundary.setMap(map)
+                var infowindow = new google.maps.InfoWindow();
+                infowindow.opened = false;
+
+                google.maps.event.addListener(boundary, 'mouseover', function(evt) {
+
+                  infowindow.setContent("Confirmed: " + confirmedCases);
+                  infowindow.setPosition(evt.latLng);
+                  infowindow.open(map);
+
+                });
+                google.maps.event.addListener(boundary, 'mouseout', function(evt) {
+                  infowindow.close();
+                  infowindow.opened = false;
+                });
+              }
+
+          });
+      }
+  });
+}
 function getLoc() {
   navigator.geolocation.getCurrentPosition(function(position) {
     var pos = {
@@ -337,125 +459,7 @@ function getLoc() {
         let address = results[num].address_components;
         let countyInfo = address[0].long_name.split(" ")[0];
         let stateInfo = address[1].long_name;
-
-        fetch("https://coronavirus-tracker-api.herokuapp.com/v2/locations?source=csbs")
-          .then(blob => blob.json())
-          .then(data => {
-            let locations = data.locations;
-            console.log(locations)
-
-
-            let state = stateInfo;
-            let county = countyInfo;
-
-            let confirmedNum = 0;
-            let deathsNum = 0;
-
-            let stateCounties = [];
-            let totalConfirmed = 0;
-            for (var i = 0; i < locations.length; i++) {
-              if (state === locations[i].province) {
-                if (locations[i].county === county) {
-                  confirmedNum = locations[i].latest.confirmed;
-                  deathsNum = locations[i].latest.deaths;
-                }
-
-                stateCounties.push(locations[i])
-                totalConfirmed += locations[i].latest.confirmed;
-              }
-            }
-
-            console.log(stateCounties)
-
-            let confirmed = document.getElementById("confirm");
-            let deaths = document.getElementById("deaths");
-            let place = document.getElementById("loc");
-
-            console.log(state, county)
-            place.innerHTML = "Place: " + county + " County, " + state;
-
-            confirmed.innerHTML = confirmedNum;
-            deaths.innerHTML = deathsNum;
-
-            let loc = 0;
-            for (var i = 0; i < stateLocs.length; i++) {
-              if (stateLocs[i].state === state) {
-                loc = i;
-                break;
-              }
-            }
-
-
-            var location = {lat: stateLocs[loc].latitude, lng: stateLocs[loc].longitude};
-            var map = new google.maps.Map(document.getElementById("map"), {
-              zoom: 7,
-              center: location,
-              disableDefaultUI: true
-            });
-            var marker = new google.maps.Marker({
-              position: pos,
-              map: map,
-              title: 'Current Location'
-            });
-
-            for (var i = 0; i < stateCounties.length; i++) {
-              let link = `https://us-county-boundary-api.herokuapp.com/api?state=${abrevs[state]}&county=${stateCounties[i].county}`;
-              let confirmedCases = stateCounties[i].latest.confirmed;
-              let severity = confirmedCases / totalConfirmed * 100.0;
-
-              fetch(link)
-                .then(blob => blob.json())
-                .then(data => {
-                    if(data != null) {
-                      var countyCoords = [];
-                      for (var j = 0; j < data.shape.length; j++) {
-                        let locPair = {lat: parseFloat(data.shape[j][0]), lng: parseFloat(data.shape[j][1])};
-                        countyCoords.push(locPair);
-                      }
-                      console.log(countyCoords)
-
-
-                      var r, g, b = 0;
-                    	if(severity < 3) {
-                        g = 255;
-                        r = Math.round(510 - 5.10 * severity);
-
-                    	}
-                    	else {
-                        r = 255;
-                        g = 255 - Math.round(5.1 * severity);
-                    	}
-                    	var h = r * 0x10000 + g * 0x100 + b * 0x1;
-
-                      var boundary = new google.maps.Polygon({
-                        paths: countyCoords,
-                        strokeColor: 'black',
-                        strokeOpacity: .5,
-                        strokeWeight: 1.5,
-                        fillColor: '#' + ('000000' + h.toString(16)).slice(-6),
-                        fillOpacity: 1
-                      });
-
-                      boundary.setMap(map)
-                      var infowindow = new google.maps.InfoWindow();
-                      infowindow.opened = false;
-
-                      google.maps.event.addListener(boundary, 'mouseover', function(evt) {
-
-                        infowindow.setContent("Confirmed: " + confirmedCases);
-                        infowindow.setPosition(evt.latLng);
-                        infowindow.open(map);
-
-                      });
-                      google.maps.event.addListener(boundary, 'mouseout', function(evt) {
-                        infowindow.close();
-                        infowindow.opened = false;
-                      });
-                    }
-
-                });
-            }
-          });
+        update(stateInfo, countyInfo, pos);
       }
       else {
         alert("Failed to fetch location");
@@ -508,6 +512,7 @@ for (var i = 0; i < selectors.length; i++) {
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const recognition = new SpeechRecognition();
+
 const msg = new SpeechSynthesisUtterance();
 msg.volume = 1;
 msg.rate = 1;
@@ -520,7 +525,7 @@ recognition.addEventListener('result', e => {
     .map(result => result.transcript)
     .join('')
   if (transcript.includes("voice control")) {
-    msg.text = "Welcome to Coronavirus near me. Say get cases to retrieve local coronavirus cases. Say get measures to get coronavirus preventative measures";
+    msg.text = "Welcome to Coronavirus near me. Say 'get cases' to retrieve local coronavirus cases. Say 'get measures' to get coronavirus preventative measures. Say 'change place' followed by county name and state to search another area";
     speechSynthesis.speak(msg);
   }
   else if (transcript.includes("get preventative measures")) {
@@ -532,7 +537,35 @@ recognition.addEventListener('result', e => {
     msg.text = `Cases in ${document.getElementById("loc").innerHTML}: ${document.getElementById("confirm").innerHTML} confirmed cases and ${document.getElementById("deaths").innerHTML} deaths.`
     speechSynthesis.speak(msg);
   }
- 
+  else if (transcript.includes("change place") || transcript.includes("change Place") || transcript.includes("Change place")) {
+    let county = "";
+    let words = transcript.split(" ");
+    let counter = 2;
+    do {
+      county += words[counter] + " ";
+      counter++;
+    } while (words[counter] != "county" && words[counter] != "County");
+    county = county.trim();
+
+    let state = "";
+    for (var i = counter + 1; i < words.length; i++) {
+      state += words[i] + " ";
+    }
+    state = state.trim();
+    update(state, county, null);
+
+    msg.text = `Place updated, say get cases to hear statistics`;
+    speechSynthesis.speak(msg);
+  }
+  console.log(transcript);
 });
 recognition.addEventListener('end', recognition.start);
 recognition.start();
+
+document.getElementById("updateInfo").addEventListener("click", function() {
+
+  let county = document.getElementById("countyInput").value;
+  let state = document.getElementById("stateInput").value;
+
+  update(state, county, null);
+});
