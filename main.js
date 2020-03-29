@@ -466,3 +466,28 @@ function getLoc() {
     alert("Failed to fetch location");
   })
 }
+var expanded = false;
+function expand() {
+  if (!expanded) {
+    document.getElementById("menu").style.transform = 'scale(3)';
+    document.querySelector(".fa-plus").style.opacity = 0;
+    expanded = true;
+  }
+  else {
+    document.getElementById("menu").style.transform = 'scale(0)';
+    document.getElementById("center-text").innerHTML = "Preventative Measures (WHO)";
+    document.querySelector(".fa-plus").style.opacity = 1;
+    expanded = false;
+  }
+}
+
+
+document.getElementById("toggle").addEventListener("click", expand);
+var selectors = document.querySelectorAll('.info')
+
+for (var i = 0; i < selectors.length; i++) {
+  selectors[i].addEventListener("click", function(evt) {
+    let texts = ["Wash Hands Frequently", "Practice Social Distancing", "Avoid Touching Eyes and Mouth", "Cover Your Mouth When Coughing", "Seek Medical Care Early", "Stay Informed By Health Care Provider"];
+    document.getElementById("center-text").innerHTML = texts[evt.currentTarget.dataset.num];
+  });
+}

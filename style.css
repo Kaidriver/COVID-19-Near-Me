@@ -9,7 +9,7 @@
   text-align: center;
   width: 10em;
   padding: 1em;
- 
+
 }
  #map {
    width: 100%;
@@ -20,3 +20,83 @@
  .symbol {
    width: 2em;
  }
+
+ .toggle {
+   background-color: #0080ff;
+   height: 200px;
+   width: 200px;
+   border-radius: 50%;
+   position: absolute;
+   margin: auto;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   z-index: 1;
+ }
+
+
+.menu {
+  transition: 1s;
+  background-color: #f3f3f3;
+  height: 125px;
+  width: 125px;
+  transform: scale(0);
+  border-radius: 50%;
+  position: absolute;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+}
+a {
+  display: inline-block;
+  position: absolute;
+  font-size: 15px;
+  color: #0080ff;
+}
+a:nth-child(1) {
+  top: 6px;
+  left: 56px;
+}
+a:nth-child(2) {
+  top: 23px;
+  left: 95px;
+}
+a:nth-child(3) {
+  top: 70px;
+  left: 97px;
+}
+a:nth-child(4) {
+  top: 95px;
+  left: 56px;
+}
+a:nth-child(5) {
+  top: 70px;
+  left: 15px;
+}
+a:nth-child(6) {
+  top: 23px;
+  left: 15px;
+}
+a:hover{
+  color: #ff4182;
+}
+
+#center-text {
+  text-align: center;
+  color: white;
+  position: absolute;
+  top: 60px;
+}
+
+.fa-plus {
+  font-size: 60px;
+  color: white;
+  position: absolute;
+  top: 115px;
+  left: 72px;
+  transition: opacity 1s;
+}
