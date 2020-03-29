@@ -388,7 +388,7 @@ function getLoc() {
 
             var location = {lat: stateLocs[loc].latitude, lng: stateLocs[loc].longitude};
             var map = new google.maps.Map(document.getElementById("map"), {
-              zoom: 6.25,
+              zoom: 7,
               center: location,
               disableDefaultUI: true
             });
@@ -466,7 +466,9 @@ function getLoc() {
     alert("Failed to fetch location");
   })
 }
+
 var expanded = false;
+var expanded2 = false;
 function expand() {
   if (!expanded) {
     document.getElementById("menu").style.transform = 'scale(3)';
@@ -475,6 +477,7 @@ function expand() {
   }
   else {
     document.getElementById("menu").style.transform = 'scale(0)';
+    document.getElementById("menu2").style.transform = 'scale(0)';
     document.getElementById("center-text").innerHTML = "Preventative Measures (WHO)";
     document.querySelector(".fa-plus").style.opacity = 1;
     expanded = false;
@@ -487,7 +490,49 @@ var selectors = document.querySelectorAll('.info')
 
 for (var i = 0; i < selectors.length; i++) {
   selectors[i].addEventListener("click", function(evt) {
-    let texts = ["Wash Hands Frequently", "Practice Social Distancing", "Avoid Touching Eyes and Mouth", "Cover Your Mouth When Coughing", "Seek Medical Care Early", "Stay Informed By Health Care Provider"];
+    let texts = ["Wash Hands Frequently", "Practice Social Distancing", "Avoid Touching Eyes and Mouth", "Cover Your Mouth When Coughing", "Seek Medical Care when Symptoms Occur", "Stay Informed By Health Care Provider", "Symptom: Persistent Coughing", "Symptom: Fever/Tiredness", "Symptom: Difficulty Breathing"];
     document.getElementById("center-text").innerHTML = texts[evt.currentTarget.dataset.num];
+    console.log(evt.currentTarget.dataset.num)
+    if (evt.currentTarget.dataset.num == 4 && !expanded2) {
+      document.getElementById("menu2").style.transform = 'scale(2)'
+      expanded2 = true;
+    }
+    else if (evt.currentTarget.dataset.num < 6){
+      document.getElementById("menu2").style.transform = 'scale(0)'
+      expanded2 = false;
+    }
   });
 }
+
+
+window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+const recognition = new SpeechRecognition();
+const msg = new SpeechSynthesisUtterance();
+msg.volume = 1;
+msg.rate = 1;
+msg.pitch = 1;
+msg.voiceURI = "Alexa";
+msg.lang = "en-US"
+recognition.addEventListener('result', e => {
+  const transcript = Array.from(e.results)
+    .map(result => result[0])
+    .map(result => result.transcript)
+    .join('')
+  if (transcript.includes("voice control")) {
+    msg.text = "Welcome to Coronavirus near me. Say get cases to retrieve local coronavirus cases. Say get measures to get coronavirus preventative measures";
+    speechSynthesis.speak(msg);
+  }
+  else if (transcript.includes("get preventative measures")) {
+    msg.text = "Information source is from WHO. Step 1 Wash Hands Frequently. Step 2 Practice Social Distancing. Step 3 Avoid Touching Eyes and Mouth. Step 4 Seek Medical Care when these symptoms occur: coughing, fever, tiredness, difficulty breathing. Step 4 Practice respiratory hygiene and Step 5 Stay informed by your health care provider."
+    speechSynthesis.speak(msg);
+  }
+  else if (transcript.includes("get cases")) {
+    console.log(document.getElementById("loc").value);
+    msg.text = `Cases in ${document.getElementById("loc").innerHTML}: ${document.getElementById("confirm").innerHTML} confirmed cases and ${document.getElementById("deaths").innerHTML} deaths.`
+    speechSynthesis.speak(msg);
+  }
+ 
+});
+recognition.addEventListener('end', recognition.start);
+recognition.start();
