@@ -128,3 +128,11 @@ a:hover{
   left: 72px;
   transition: opacity 1s;
 }
+
+.link {
+  all: unset;
+  color: #0080ff
+}
+.link:hover {
+
+}
