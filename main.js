@@ -515,7 +515,7 @@ const recognition = new SpeechRecognition();
 
 const msg = new SpeechSynthesisUtterance();
 msg.volume = 1;
-msg.rate = 1;
+msg.rate = 1.5;
 msg.pitch = 1;
 msg.voiceURI = "Alexa";
 msg.lang = "en-US"
