@@ -321,8 +321,6 @@ function update(stateInfo, countyInfo, pos) {
     .then(blob => blob.json())
     .then(data => {
       let locations = data.locations;
-      console.log(locations)
-
 
       let state = stateInfo;
       let county = countyInfo;
@@ -344,13 +342,10 @@ function update(stateInfo, countyInfo, pos) {
         }
       }
 
-      console.log(stateCounties)
-
       let confirmed = document.getElementById("confirm");
       let deaths = document.getElementById("deaths");
       let place = document.getElementById("loc");
 
-      console.log(state, county)
       place.innerHTML = "Place: " + county + " County, " + state;
 
       confirmed.innerHTML = confirmedNum;
@@ -391,8 +386,6 @@ function update(stateInfo, countyInfo, pos) {
                   let locPair = {lat: parseFloat(data.shape[j][0]), lng: parseFloat(data.shape[j][1])};
                   countyCoords.push(locPair);
                 }
-                console.log(countyCoords)
-
 
                 var r, g, b = 0;
                 if(severity < 3) {
@@ -446,18 +439,16 @@ function getLoc() {
     var geocoder = new google.maps.Geocoder;
     geocoder.geocode({'location': pos}, function(results, status) {
       if (status == 'OK') {
-        console.log(results)
 
         let num = 7;
         for (var i = 0; i < results.length; i++) {
           if (results[i].types[0] === "administrative_area_level_2") {
             num = i;
-            console.log(num)
             break;
           }
         }
         let address = results[num].address_components;
-        let countyInfo = address[0].long_name.split(" ")[0];
+        let countyInfo = address[0].long_name.substring(0, address[0].long_name.indexOf("County")).trim()
         let stateInfo = address[1].long_name;
         update(stateInfo, countyInfo, pos);
       }
@@ -496,7 +487,6 @@ for (var i = 0; i < selectors.length; i++) {
   selectors[i].addEventListener("click", function(evt) {
     let texts = ["Wash Hands Frequently", "Practice Social Distancing", "Avoid Touching Eyes and Mouth", "Cover Your Mouth When Coughing", "Seek Medical Care when Symptoms Occur", "Stay Informed By Health Care Provider", "Symptom: Persistent Coughing", "Symptom: Fever/Tiredness", "Symptom: Difficulty Breathing"];
     document.getElementById("center-text").innerHTML = texts[evt.currentTarget.dataset.num];
-    console.log(evt.currentTarget.dataset.num)
     if (evt.currentTarget.dataset.num == 4 && !expanded2) {
       document.getElementById("menu2").style.transform = 'scale(2.2)'
       expanded2 = true;
@@ -533,7 +523,6 @@ recognition.addEventListener('result', e => {
     speechSynthesis.speak(msg);
   }
   else if (transcript.includes("get cases")) {
-    console.log(document.getElementById("loc").value);
     msg.text = `Cases in ${document.getElementById("loc").innerHTML}: ${document.getElementById("confirm").innerHTML} confirmed cases and ${document.getElementById("deaths").innerHTML} deaths.`
     speechSynthesis.speak(msg);
   }
@@ -557,7 +546,6 @@ recognition.addEventListener('result', e => {
     msg.text = `Place updated, say get cases to hear statistics`;
     speechSynthesis.speak(msg);
   }
-  console.log(transcript);
 });
 recognition.addEventListener('end', recognition.start);
 recognition.start();
